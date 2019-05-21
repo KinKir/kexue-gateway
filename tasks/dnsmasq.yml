@@ -1,6 +1,7 @@
 - name: Install dnsmasq
   apt:
     name: dnsmasq
+    state: "{{ 'present' if dnsmasq_enabled else 'absent' }}"
 
 - name: Generate dnsmasq configuration
   template:

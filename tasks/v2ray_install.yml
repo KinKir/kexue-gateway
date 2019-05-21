@@ -13,9 +13,9 @@
 - name: Extract v2ray archive
   unarchive:
     src: "{{ v2ray_archive }}"
-    dest: "{{ v2ray_install_path }}"
+    dest: /tmp/v2ray
 
-- name: Ensure execute permission
+- name: Ensure execute permissions
   file:
     path: "{{ v2ray_install_path }}/{{ item }}"
     mode: 0755
@@ -24,11 +24,19 @@
     - v2ctl
 
 - name: Validate v2* executable files
-  shell: "{{ v2ray_install_path }}/v2ctl {{ v2ray_install_path }}/{{ item }}"
+  shell: "/tmp/v2ray/v2ctl verify /tmp/v2ray/{{ item }}"
   changed_when: false
   loop:
     - v2ray
     - v2ctl
+
+- name: Copy files to the installation directory
+  copy:
+    remote_src: true
+    force: true
+    src: /tmp/v2ray/
+    dest: "{{ v2ray_install_path }}"
+    mode: preserve
 
 - name: Create symlinks to v2* executable files
   file:
